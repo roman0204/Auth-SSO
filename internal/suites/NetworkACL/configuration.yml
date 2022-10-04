@@ -1,0 +1,75 @@
+---
+###############################################################
+#                Authelia minimal configuration               #
+###############################################################
+
+server:
+  port: 9091
+  tls:
+    certificate: /config/ssl/cert.pem
+    key: /config/ssl/key.pem
+
+log:
+  level: debug
+
+jwt_secret: unsecure_password
+
+authentication_backend:
+  file:
+    path: /config/users.yml
+
+session:
+  secret: unsecure_session_secret
+  domain: example.com
+  expiration: 3600  # 1 hour
+  inactivity: 300  # 5 minutes
+  remember_me_duration: 1y
+
+# Configuration of the storage backend used to store data and secrets. i.e. totp data
+storage:
+  encryption_key: a_not_so_secure_encryption_key
+  local:
+    path: /config/db.sqlite
+
+# Access Control
+#
+# Access control is a set of rules you can use to restrict user access to certain
+# resources.
+access_control:
+  default_policy: deny
+  networks:
+    - name: Clients
+      networks:
+        - 192.168.240.202/32
+        - 192.168.240.203/32
+  rules:
+    - domain: secure.example.com
+      policy: one_factor
+      networks:
+        - 192.168.240.201/32
+
+    - domain: secure.example.com
+      policy: bypass
+      networks:
+        - Clients
+
+    - domain: secure.example.com
+      policy: two_factor
+
+# Configuration of the authentication regulation mechanism.
+regulation:
+  # Set it to 0 to disable max_retries.
+  max_retries: 3
+  # The user is banned if the authentication failed `max_retries` times in a `find_time` seconds window.
+  find_time: 300
+  # The length of time before a banned user can login again.
+  ban_time: 900
+
+notifier:
+  # Use a SMTP server for sending notifications
+  smtp:
+    host: smtp
+    port: 1025
+    sender: admin@example.com
+    disable_require_tls: true
+...
