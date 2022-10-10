@@ -1,0 +1,71 @@
+{
+  "extends": [
+    "config:base",
+    ":semanticCommitTypeAll(build)",
+    ":separatePatchReleases"
+  ],
+  "ignorePaths": [
+  	"docs/**"
+  ],
+  "ignorePresets": [
+    ":combinePatchMinorReleases",
+    "helpers:disableTypesNodeMajor",
+    ":prHourlyLimit2",
+    ":semanticPrefixFixDepsChoreOthers"
+  ],
+  "enabledManagers": [
+    "bundler",
+    "docker-compose",
+    "dockerfile",
+    "gomod",
+    "npm"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "datasources": [
+        "docker"
+      ],
+      "addLabels": [
+        "docker"
+      ]
+    },
+    {
+      "datasources": [
+        "go"
+      ],
+      "addLabels": [
+        "go"
+      ]
+    },
+    {
+      "datasources": [
+        "npm"
+      ],
+      "addLabels": [
+        "javascript"
+      ]
+    },
+    {
+      "datasources": [
+        "rubygems"
+      ],
+      "addLabels": [
+        "ruby"
+      ]
+    }
+  ],
+  "postUpdateOptions": [
+      "gomodTidy",
+      "gomodNoMassage"
+  ]
+}
